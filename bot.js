@@ -8,9 +8,10 @@ const remedio = require('./data/remedios.json')
 const doenca = require('./data/doencas.json')
 const PORT = process.env.PORT || 3000;
 
-// app.get('/', function(req, res) {
-//   res.send('Olá Mundo!');
-// });
+app.get('/', function(req, res) {
+  res.send('Checked!');
+  console.log('Checked!');
+});
 
 var opcQuote = {
   method: 'GET',
@@ -25,7 +26,7 @@ var opcQuote = {
 function transRequest(msg) {
   axiosTest()
   .then(function (response) {
-    console.log("\n##############################################################################################################\n> Mensagem em inglês: "+response+'\n')
+    console.log("\n##############################################################################################################\n> Mensagem em inglês: "+response)
     var opcTrans = {
       method: 'POST',
       url: 'https://microsoft-translator-text.p.rapidapi.com/translate',
@@ -47,7 +48,7 @@ function transRequest(msg) {
         }
       ],
     };
-    console.log('> Requisição enviada para o tradutor\n')
+    console.log('> Requisição enviada para o tradutor')
     axios.request(opcTrans)
     .then(function (response) {
       console.log('> Mensagem em português: '+response.data[0].translations[0].text+'\n');
@@ -86,16 +87,21 @@ function consulta(msg){
 function commandsMenu(msg){
   if (msg.content === '!bcommand') {
     msg.channel.send(allCommands)
+    console.log('> Executado !bcommand')
   }  else if (msg.content === '!operacao') {
     msg.reply('__')
   } else if (msg.content === '!consulta') {
+    console.log('> Executado !consulta')
     consulta(msg)
   } else if (msg.content === '!motivacao') {
+    console.log('> Executado !motivacao')
     transRequest(msg);    
   } else if (msg.content === '!tt') {
     // consulta(msg)
   }
 }
+
+client.on('message', commandsMenu);
 
 const allCommands = '`!bcommand` - Exibe os comandos disponíveis\n`!consulta` - O Dr. Baseggio realiza um diagnóstico e prescreve um medicamento\n`!oi` - Teste\n`!dica` - Teste\n`!motivacao` - Dr. Lucas recita uma belíssima frase motivacional\n`!suga` - Teste\n`!base` - Teste\n`!tt` - Teste\n'
 
@@ -104,11 +110,11 @@ client.login(process.env.bot_token);
 app.listen(PORT, () => {
 
   console.log(`Running on port ${ PORT }`);
-  
+
   client.on('ready',  () => {
     console.log(`${client.user.tag} está online :)`);
   });
   
-  client.on('message', commandsMenu);
+  // client.on('message', commandsMenu);
 });
 

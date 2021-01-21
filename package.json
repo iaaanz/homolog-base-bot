@@ -2,7 +2,7 @@
   "name": "base_bot",
   "version": "1.0.0",
   "description": "Bot with the objective of launching various information in the health and related fields.",
-  "main": "index.js",
+  "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
     "devStart": "nodemon bot.js",
@@ -11,10 +11,10 @@
   "author": "Ian Grasman de Oliveira",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "axios": "^0.21.1"
+    "express": "^4.17.1"
   },
   "devDependencies": {
     "heroku": "^7.47.7",
