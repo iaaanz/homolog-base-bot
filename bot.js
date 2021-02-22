@@ -1,30 +1,40 @@
 var express = require('express');
-var app = express();
+const app = express();
 require('dotenv').config();
-const Discord = require('discord.js');
+var Discord = require('discord.js');
 const client = new Discord.Client();
 var axios = require("axios");
 const remedio = require('./data/remedios.json')
-const doenca = require('./data/doencas.json')
+const doenca = require('./data/doencas.json');
 const PORT = process.env.PORT || 3000;
 
-app.get('/', function(req, res) {
+app.get('/check', function(req, res) {
   res.send('Checked!');
-  console.log('Checked!');
+  console.log('Checked!');  
+  reqVolta();
 });
+
+function reqVolta(){
+  axios.get('https://ianz-ping-master.herokuapp.com/check')
+    .then(resp => {
+      console.log("Efetuando o request de volta :)");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
 
 var opcQuote = {
   method: 'GET',
   url: 'https://bodybuilding-quotes.p.rapidapi.com/random-quote',
   headers: {
-    //'x-api-key': '{{api-key}}',
     'x-rapidapi-key': process.env.rapidapi_key,
     'x-rapidapi-host': 'bodybuilding-quotes.p.rapidapi.com'
   }
 };
 
 function transRequest(msg) {
-  axiosTest()
+  axiosReq()
   .then(function (response) {
     console.log("\n##############################################################################################################\n> Mensagem em inglês: "+response)
     var opcTrans = {
@@ -67,7 +77,7 @@ function rangeGen(min, max) {
   )
 }
 
-async function axiosTest() {
+async function axiosReq() {
   const response = await axios.request(opcQuote)
   return response.data.quote
 } 
@@ -108,13 +118,9 @@ const allCommands = '`!bcommand` - Exibe os comandos disponíveis\n`!consulta` -
 client.login(process.env.bot_token);
 
 app.listen(PORT, () => {
-
   console.log(`Running on port ${ PORT }`);
-
   client.on('ready',  () => {
     console.log(`${client.user.tag} está online :)`);
-  });
-  
-  // client.on('message', commandsMenu);
+  });  
 });
 
