@@ -8,8 +8,8 @@
     "test": "{src,test}/*.js"
   },
   "scripts": {
-    "start": "nodemon --experimental-json-modules server.js",
-    "devStart": "nodemon server.js",
+    "start": "node --experimental-json-modules server.js",
+    "devStart": "nodemon --experimental-json-modules server.js",
     "test": "echo \"Não fiz esse comando ainda\" && exit 1"
   },
   "author": "Ian Grasman de Oliveira",
