@@ -2,14 +2,13 @@
   "name": "base_bot",
   "version": "1.0.0",
   "description": "Bot with the objective of launching various information in the health and related fields.",
-  "type": "module",
   "main": "server.js",
   "watch": {
     "test": "{src,test}/*.js"
   },
   "scripts": {
-    "start": "node --experimental-json-modules server.js",
-    "devStart": "nodemon --experimental-json-modules server.js",
+    "start": "node server.js",
+    "devStart": "nodemon server.js",
     "test": "echo \"Não fiz esse comando ainda\" && exit 1"
   },
   "author": "Ian Grasman de Oliveira",

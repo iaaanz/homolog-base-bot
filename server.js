@@ -1,15 +1,20 @@
-import remedioJson from './data/remedios.json';
-import doencaJson from './data/doencas.json';
-import dotenv from 'dotenv';
-import express from 'express';
-import Discord from 'discord.js';
-import axios from 'axios';
-dotenv.config();
+require('dotenv').config();
+const express = require('express');
+const Discord = require('discord.js');
+const axios = require('axios');
+const { prefix } = require('./config.json');
+const fs = require('fs');
 const app = express();
 const client = new Discord.Client();
+client.commands = new Discord.Collection();
 const PORT = process.env.PORT || 3000;
-const allCommands =
-  '`!bcommand` - Exibe os comandos disponíveis\n`!consulta` - O Dr. Baseggio realiza um diagnóstico e prescreve um medicamento\n';
+
+const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.name, command);
+}
 
 app.get('/check', function (req, res) {
   res.send('Checked!');
@@ -28,43 +33,25 @@ const reqVolta = () => {
     });
 };
 
-const menu = (msg) => {
-  switch (msg.content) {
-    case '!bcommand':
-      msg.channel.send(allCommands);
-      break;
-    case '!consulta':
-      consulta(msg);
-      break;
+client.on('message', (message) => {
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+  const args = message.content.slice(prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
+
+  if (!client.commands.has(command)) return;
+
+  console.log(args, command);
+  console.log(client.commands);
+
+  try {
+    client.commands.get(command).execute(message, args);
+  } catch (error) {
+    console.error(error);
+    message.reply('there was an error trying to execute that command!');
   }
-};
+});
 
-const rangeGen = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
-
-const consulta = (msg) => {
-  const codRemedio = rangeGen(0, 25680);
-  const doenca = doencaJson[rangeGen(0, 14232)].nome;
-  const tarja = remedioJson[codRemedio].TARJA;
-  switch (tarja) {
-    case 'Tarja Preta':
-      return msg.reply(
-        `olá, você foi diagnositcado com ${doenca}, nessa situação vou te receitar ${remedioJson[codRemedio].SUBSTANCIA} (${remedioJson[codRemedio].APRESENTACAO}), mas tome cuidado pois esse remédio é TARJA PRETA, se não tomado de maneira correta pode causar dependência!`
-      );
-      break;
-    case 'Tarja Vermelha':
-      return msg.reply(
-        `olá, você foi diagnositcado com ${doenca}, nessa situação vou te receitar ${remedioJson[codRemedio].SUBSTANCIA} (${remedioJson[codRemedio].APRESENTACAO}), siga as minhas prescrições pois esse remédio é TARJA VERMELHA!`
-      );
-      break;
-    default:
-      return msg.reply(
-        `olá, você foi diagnositcado com ${doenca}, nessa situação vou te receitar ${remedioJson[codRemedio].SUBSTANCIA} (${remedioJson[codRemedio].APRESENTACAO})`
-      );
-      break;
-  }
-};
-
-client.on('message', menu);
 client.login(process.env.bot_token);
 
 app.listen(PORT, () => {
