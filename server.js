@@ -9,7 +9,7 @@ const app = express();
 const client = new Discord.Client();
 const PORT = process.env.PORT || 3000;
 const allCommands =
-  '`!bcommand` - Exibe os comandos disponíveis\n`!consulta` - O Dr. Baseggio realiza um diagnóstico e prescreve um medicamento\n`!pensativo` - Dr. Lucas solta uma belíssima frase';
+  '`!bcommand` - Exibe os comandos disponíveis\n`!consulta` - O Dr. Baseggio realiza um diagnóstico e prescreve um medicamento\n';
 
 app.get('/check', function (req, res) {
   res.send('Checked!');
@@ -28,17 +28,16 @@ const reqVolta = () => {
     });
 };
 
-function commandsMenu(msg) {
-  if (msg.content === '!bcommand') {
-    msg.channel.send(allCommands);
-  } else if (msg.content === '!operacao') {
-    msg.reply('Comando ainda não está pronto :tools:');
-  } else if (msg.content === '!consulta') {
-    consulta(msg);
-  } else if (msg.content === '!pensativo') {
-    msg.reply('Comando ainda não está pronto :tools:');
+const menu = (msg) => {
+  switch (msg.content) {
+    case '!bcommand':
+      msg.channel.send(allCommands);
+      break;
+    case '!consulta':
+      consulta(msg);
+      break;
   }
-}
+};
 
 const rangeGen = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
@@ -65,7 +64,7 @@ const consulta = (msg) => {
   }
 };
 
-client.on('message', commandsMenu);
+client.on('message', menu);
 client.login(process.env.bot_token);
 
 app.listen(PORT, () => {
