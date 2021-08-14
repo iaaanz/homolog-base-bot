@@ -1,7 +1,8 @@
 const { MessageEmbed } = require('discord.js');
+const { logChannelId } = require('./ids');
 
 const showLog = (client, message) => {
-  const logChannel = client.channels.cache.get('874095128371941456');
+  const logChannel = client.channels.cache.get(logChannelId);
   const userId = message.author.id;
   const embed = new MessageEmbed()
     .setTitle('**Comando executado**')
