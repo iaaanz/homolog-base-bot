@@ -8,7 +8,7 @@ const tarja = remedioJson[codRemedio].TARJA;
 module.exports = {
   name: 'consulta',
   description: '',
-  execute(message) {
+  execute(client, message) {
     switch (tarja) {
       case 'Tarja Preta':
         return message.reply(

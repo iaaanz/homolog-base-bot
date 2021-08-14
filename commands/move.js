@@ -1,10 +1,6 @@
+const { sleep, toChannel } = require("../helpers");
 const channels = ['854506690972221490', '854506729797451777', '854506763486756884'];
-
 const whiteList = ['385171042773106691', '275731807570362368'];
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const toChannel = (member, ch) => member.voice.setChannel(ch);
 
 const move = async (member, channelID, time, ms) => {
   for (let i = 0; i < time; i++) {
@@ -21,7 +17,7 @@ const mapUser = (userObj, msg, userId, reply, imgPath) => {
   if (whiteList.includes(id)) return;
 
   userObj.members.map((member) => {
-    if (member.user.id == id) {
+    if (member.user.id == id && member.voice.channelID != null) {
       typeof imgPath === 'undefined'
         ? msg.channel.send(`${userId}, ${reply}`)
         : msg.channel.send(reply, imgPath);
@@ -33,8 +29,7 @@ const mapUser = (userObj, msg, userId, reply, imgPath) => {
 module.exports = {
   name: 'move',
   description: '',
-  execute(message, args) {
-    const content = message.content;
+  execute(client, message, args) {
     const userObj = {
       members: message.channel.members,
       channelId: message.member.voice.channelID,

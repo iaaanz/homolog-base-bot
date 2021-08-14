@@ -6,10 +6,12 @@ const { prefix } = require('./config.json');
 const fs = require('fs');
 const app = express();
 const client = new Discord.Client();
-client.commands = new Discord.Collection();
 const PORT = process.env.PORT || 3000;
-
 const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
+const logChannel = require('./management/showLog');
+const musicCommands = require('./management/musicFilter');
+
+client.commands = new Discord.Collection();
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -34,6 +36,8 @@ const reqVolta = () => {
 };
 
 client.on('message', (message) => {
+  musicCommands.filter(message);
+
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -41,8 +45,10 @@ client.on('message', (message) => {
 
   if (!client.commands.has(command)) return;
 
+  logChannel.showLog(client, message);
+
   try {
-    client.commands.get(command).execute(message, args);
+    client.commands.get(command).execute(client, message, args);
   } catch (error) {
     console.error(error);
     message.reply('there was an error trying to execute that command!');
