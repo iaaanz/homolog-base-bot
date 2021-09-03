@@ -19,12 +19,12 @@ const filter = async (message) => {
     
     await sleep(1000);
 
-    if (msgContent.startsWith('**')) {
+    if (msgContent.includes('searching')) {
       const searchWord = msgContent.match(/`([^`]+)`/)[1];
       const channelTitle = await getChannelTitle(searchWord);
       return bannedSongs.some(key => channelTitle.includes(key)) ? rythmBot.voice.kick() : '';
     }
-    
+
     return bannedSongs.some(key => msgContent.includes(key)) ? rythmBot.voice.kick() : '';
   }
 }
